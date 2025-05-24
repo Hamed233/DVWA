@@ -146,7 +146,7 @@ function dvwaLogin( $pUsername ) {
 function dvwaIsLoggedIn() {
 	global $_DVWA;
 
-	if (in_array("disable_authentication", $_DVWA) && $_DVWA['disable_authentication']) {
+	if (array_key_exists("disable_authentication", $_DVWA) && $_DVWA['disable_authentication']) {
 		return true;
 	}
 	$dvwaSession =& dvwaSessionGrab();
@@ -189,6 +189,14 @@ function &dvwaPageNewGrab() {
 }
 
 
+function dvwaThemeGet() {
+	if (isset($_COOKIE['theme'])) {
+		return $_COOKIE[ 'theme' ];
+	}
+	return 'light';
+}
+
+
 function dvwaSecurityLevelGet() {
 	global $_DVWA;
 
@@ -199,7 +207,7 @@ function dvwaSecurityLevelGet() {
 
 	// If not, check to see if authentication is disabled, if it is, use
 	// the default security level.
-	if (in_array("disable_authentication", $_DVWA) && $_DVWA['disable_authentication']) {
+	if (array_key_exists("disable_authentication", $_DVWA) && $_DVWA['disable_authentication']) {
 		return $_DVWA[ 'default_security_level' ];
 	}
 
@@ -394,13 +402,15 @@ function dvwaHtmlEcho( $pPage ) {
 
 	</head>
 
-	<body class=\"home\">
+	<body class=\"home " . dvwaThemeGet() . "\">
 		<div id=\"container\">
 
 			<div id=\"header\">
 
 				<img src=\"" . DVWA_WEB_PAGE_TO_ROOT . "dvwa/images/logo.png\" alt=\"Damn Vulnerable Web Application\" />
-
+                <a href=\"#\" onclick=\"javascript:toggleTheme();\" class=\"theme-icon\" title=\"Toggle theme between light and dark.\">
+                    <img src=\"" . DVWA_WEB_PAGE_TO_ROOT . "dvwa/images/theme-light-dark.png\" alt=\"Damn Vulnerable Web Application\" />
+                </a>
 			</div>
 
 			<div id=\"main_menu\">
@@ -463,7 +473,7 @@ function dvwaHelpHtmlEcho( $pPage ) {
 
 	</head>
 
-	<body>
+	<body class=\"" . dvwaThemeGet() . "\">
 
 	<div id=\"container\">
 
@@ -499,7 +509,7 @@ function dvwaSourceHtmlEcho( $pPage ) {
 
 	</head>
 
-	<body>
+	<body class=\"" . dvwaThemeGet() . "\">
 
 		<div id=\"container\">
 
@@ -623,7 +633,7 @@ function dvwaGuestbook() {
 function checkToken( $user_token, $session_token, $returnURL ) {  # Validate the given (CSRF) token
 	global $_DVWA;
 
-	if (in_array("disable_authentication", $_DVWA) && $_DVWA['disable_authentication']) {
+	if (array_key_exists("disable_authentication", $_DVWA) && $_DVWA['disable_authentication']) {
 		return true;
 	}
 
